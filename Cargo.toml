@@ -1,0 +1,49 @@
+[workspace]
+members  = ["contracts/*"]
+resolver = "2"
+
+[workspace.package]
+edition    = "2021"
+version    = "0.7.0"
+license    = "Apache-2.0"
+repository = "https://github.com/Art3miX/cosmos-coin-flip"
+homepage   = "https://cosmoscoinflip.com"
+
+exclude = [
+  # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.
+  "contract.wasm",
+  "hash.txt",
+]
+
+[workspace.dependencies]
+cosmwasm-schema  = "1.1"
+cosmwasm-std     = "1.1"
+cosmwasm-storage = "1.1"
+cw-storage-plus  = "1.0"
+cw-utils         = "1.0"
+cw2              = "1.0"
+cw721            = "0.16.0"
+cw721-base       = { version = "0.16.0", features = ["library"] }
+schemars         = "0.8.11"
+serde            = { version = "1.0.147", default-features = false, features = ["derive"] }
+thiserror        = "1.0.31"
+anyhow           = "1"
+sg721            = { package = "sg721", version = "0.22.9", git = "https://github.com/public-awesome/launchpad" }
+sg721-base       = { package = "sg721-base", version = "0.22.9", git = "https://github.com/public-awesome/launchpad", features = ["library"] }
+sg-std           = { package = "sg-std", version = "0.22.9", git = "https://github.com/public-awesome/launchpad" }
+
+# dev deps
+cw-multi-test = "0.16"
+sg-multi-test = { package = "sg-multi-test", version = "0.22.9", git = "https://github.com/public-awesome/launchpad" }
+
+[profile.release.package.coin-flip]
+codegen-units = 1
+incremental   = false
+
+[profile.release]
+rpath            = false
+lto              = true
+overflow-checks  = true
+opt-level        = 3
+debug            = false
+debug-assertions = false
