@@ -315,9 +315,9 @@ mod flip_execute {
 
         let sha256 = Sha256Digest::digest(format!(
             "{}{}{}",
+            tx_index,
             env.block.height,
             env.block.time.nanos(),
-            tx_index,
         ));
 
         sha256.as_bytes().iter().fold(0, |acc, x| acc + *x as u64)
