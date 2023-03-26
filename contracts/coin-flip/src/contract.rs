@@ -49,6 +49,8 @@ pub fn instantiate(
             admin: info.sender.to_string(),
             denoms: msg.denoms,
             bank_limit: msg.bank_limit.unwrap_or(MIN_BANK_AMOUNT),
+            min_bet_limit: msg.min_bet_limit.unwrap_or(MIN_BET),
+            max_bet_limit: msg.max_bet_limit.unwrap_or(MAX_BET),
             flips_per_block_limit: msg.flips_per_block_limit.unwrap_or(10), // 10 flips per block
             wallets: Wallets {
                 team: msg.wallets.team,
@@ -106,6 +108,10 @@ pub fn execute(
             ensure_admin(&config, &info)?;
             sudo::update_pause(deps, config, is_paused)
         }
+        ExecuteMsg::Sudo(SudoMsg::UpdateBetLimit { min_bet, max_bet }) => {
+            ensure_admin(&config, &info)?;
+            sudo::update_bet_limit(deps, config, min_bet, max_bet)
+        }
     }
 }
 
@@ -132,15 +138,15 @@ mod flip_execute {
     ) -> Result<Response, ContractError> {
         // Make sure that the sent amount is not above our max
         ensure!(
-            amount <= MAX_BET,
+            amount <= config.max_bet_limit,
             ContractError::OverTheLimitBet {
-                max_limit: MAX_BET.checked_div(Uint128::new(1000000))?.to_string()
+                max_limit: (config.max_bet_limit / Uint128::new(1000000)).to_string()
             }
         );
         ensure!(
-            amount >= MIN_BET,
+            amount >= config.min_bet_limit,
             ContractError::UnderTheLimitBet {
-                min_limit: MIN_BET.checked_div(Uint128::new(1000000))?.to_string()
+                min_limit: (config.min_bet_limit / Uint128::new(1000000)).to_string()
             }
         );
 
@@ -315,9 +321,9 @@ mod flip_execute {
 
         let sha256 = Sha256Digest::digest(format!(
             "{}{}{}",
-            tx_index,
             env.block.height,
             env.block.time.nanos(),
+            tx_index,
         ));
 
         sha256.as_bytes().iter().fold(0, |acc, x| acc + *x as u64)

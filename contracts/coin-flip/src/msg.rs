@@ -10,6 +10,8 @@ pub struct InstantiateMsg {
     pub wallets: Wallets,
     pub fees: Fees,
     pub bank_limit: Option<Uint128>,
+    pub min_bet_limit: Option<Uint128>,
+    pub max_bet_limit: Option<Uint128>,
     pub flips_per_block_limit: Option<u64>,
     pub sg721_addr: Option<String>,
 }
@@ -57,6 +59,7 @@ pub enum SudoMsg {
     UpdateFees { fees: Fees },
     UpdateSg721 { addr: String },
     UpdateBankLimit { limit: Uint128 },
+    UpdateBetLimit { min_bet: Uint128, max_bet: Uint128 },
     UpdatePause(bool),
 }
 

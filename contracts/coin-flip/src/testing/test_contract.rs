@@ -11,8 +11,8 @@ use crate::{
 
 use super::utils::{
     executes::{
-        execute_do_flips, execute_start_flip, sudo_update_bank_limit, sudo_update_fees,
-        unwrap_execute,
+        execute_do_flips, execute_start_flip, sudo_update_bank_limit, sudo_update_bet_limit,
+        sudo_update_fees, unwrap_execute,
     },
     helpers::add_10_todo_flips,
     queries::{query_config, query_last_flips, query_score},
@@ -407,4 +407,44 @@ fn test_contract_is_paused() {
     )
     .unwrap();
     execute_do_flips(&mut app, contract_addr).unwrap();
+}
+
+#[test]
+fn test_update_bet_limit() {
+    let (mut app, contract_addr) = setup_base_contract();
+
+    execute_start_flip(
+        &mut app,
+        contract_addr.clone(),
+        PickTypes::Heads,
+        MIN_BET,
+        Addr::unchecked(FLIPPER_ADDR2),
+        MIN_FUNDS,
+    )
+    .unwrap();
+    execute_do_flips(&mut app, contract_addr.clone()).unwrap();
+
+    sudo_update_bet_limit(
+        &mut app,
+        contract_addr.clone(),
+        MIN_BET + Uint128::new(1000000),
+        MAX_BET + Uint128::new(1000000),
+    )
+    .unwrap();
+
+    let err = execute_start_flip(
+        &mut app,
+        contract_addr,
+        PickTypes::Heads,
+        MIN_BET,
+        Addr::unchecked(FLIPPER_ADDR2),
+        MIN_FUNDS,
+    )
+    .unwrap_err();
+    assert_eq!(
+        err,
+        ContractError::UnderTheLimitBet {
+            min_limit: ((MIN_BET + Uint128::new(1000000)) / Uint128::new(1000000)).to_string()
+        }
+    );
 }

@@ -64,6 +64,20 @@ pub fn sudo_update_fees(
     ))
 }
 
+pub fn sudo_update_bet_limit(
+    app: &mut BaseApp,
+    contract_addr: Addr,
+    min_bet: Uint128,
+    max_bet: Uint128,
+) -> Result<AppResponse, ContractError> {
+    unwrap_execute(app.execute_contract(
+        Addr::unchecked(CREATOR_ADDR),
+        contract_addr,
+        &ExecuteMsg::Sudo(SudoMsg::UpdateBetLimit { min_bet, max_bet }),
+        &[],
+    ))
+}
+
 pub fn sudo_update_pause(
     app: &mut BaseApp,
     contract_addr: Addr,

@@ -38,7 +38,20 @@ pub fn update_sg721(
     config.sg721_addr = Some(deps.api.addr_validate(&addr)?);
     CONFIG.save(deps.storage, &config)?;
 
-    Ok(Response::default().add_attribute("method", "update_fees"))
+    Ok(Response::default().add_attribute("method", "update_sg721"))
+}
+
+pub fn update_bet_limit(
+    deps: DepsMut,
+    mut config: Config,
+    min_bet: Uint128,
+    max_bet: Uint128,
+) -> Result<Response, ContractError> {
+    config.min_bet_limit = min_bet;
+    config.max_bet_limit = max_bet;
+    CONFIG.save(deps.storage, &config)?;
+
+    Ok(Response::default().add_attribute("method", "update_bet_limit"))
 }
 
 pub fn update_pause(

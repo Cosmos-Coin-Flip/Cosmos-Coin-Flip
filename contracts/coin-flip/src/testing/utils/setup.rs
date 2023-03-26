@@ -38,20 +38,20 @@ pub const RESERVE_ADDR: &str = "reserve_wallet";
 
 pub const PLUS_NANOS: u64 = 654321;
 
-pub fn flip_contract() -> Box<dyn Contract<StargazeMsgWrapper>> {
-    let contract = ContractWrapper::new(
-        crate::contract::execute,
-        crate::contract::instantiate,
-        crate::contract::query,
-    );
-    Box::new(contract)
-}
-
 pub fn nft_contract() -> Box<dyn Contract<StargazeMsgWrapper>> {
     let contract = ContractWrapper::new(
         sg721_base::entry::execute,
         sg721_base::entry::instantiate,
         sg721_base::entry::query,
+    );
+    Box::new(contract)
+}
+
+pub fn flip_contract() -> Box<dyn Contract<StargazeMsgWrapper>> {
+    let contract = ContractWrapper::new(
+        crate::contract::execute,
+        crate::contract::instantiate,
+        crate::contract::query,
     );
     Box::new(contract)
 }
@@ -108,6 +108,8 @@ pub fn setup_base_contract() -> (BaseApp, Addr) {
             flip_bps: 350,
         },
         bank_limit: None,
+        min_bet_limit: None,
+        max_bet_limit: None,
         flips_per_block_limit: None,
         sg721_addr: None,
     };

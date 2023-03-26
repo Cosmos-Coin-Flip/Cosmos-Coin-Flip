@@ -8,6 +8,8 @@ pub struct Config {
     pub admin: String,
     pub denoms: Vec<String>,
     pub bank_limit: Uint128,
+    pub min_bet_limit: Uint128,
+    pub max_bet_limit: Uint128,
     pub flips_per_block_limit: u64,
     pub wallets: Wallets,
     pub fees: Fees,
